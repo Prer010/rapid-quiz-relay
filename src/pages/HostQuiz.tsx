@@ -153,7 +153,7 @@ const HostQuiz = () => {
           )}
 
           {session?.status === 'active' && !session?.show_leaderboard && currentQuestion && (
-            <div className="space-y-6">
+            <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <h2 className="text-xl font-bold">
                   Question {session.current_question_index + 1} of {questions?.length}
@@ -175,24 +175,24 @@ const HostQuiz = () => {
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 text-primary-glow">
                 {['A', 'B', 'C', 'D'].map(option => {
                   const optionText = currentQuestion[`option_${option.toLowerCase()}`];
                   if (!optionText) return null;
                   
                   const colors = {
-                    A: 'from-red-500 to-red-600',
-                    B: 'from-blue-500 to-blue-600',
-                    C: 'from-yellow-500 to-yellow-600',
-                    D: 'from-green-500 to-green-600'
+                    A: 'from-white border border-gray-300 to-gray-100',
+                    B: 'from-white border border-gray-300 to-gray-100',
+                    C: 'from-white border border-gray-300 to-gray-100',
+                    D: 'from-white border border-gray-300 to-gray-100'
                   };
 
                   return (
                     <div 
                       key={option}
-                      className={`p-6 rounded-xl bg-gradient-to-br ${colors[option as keyof typeof colors]} text-white`}
+                      className={`p-4 rounded-xl bg-gradient-to-br ${colors[option as keyof typeof colors]} text-primary-glow`}
                     >
-                      <span className="text-3xl font-bold mr-3">{option}</span>
+                      <span className="w-16 rounded-full p-2 bg-accent text-xl font-bold mr-3 ">{option}</span>
                       <span className="text-xl">{optionText}</span>
                     </div>
                   );

@@ -43,7 +43,7 @@ const HostQuiz = () => {
   const [timeLeft, setTimeLeft] = useState(30);
 
   // 2. This single effect now handles all timer logic.
-  useEffect(() => {
+ useEffect(() => {
     // Guard against running before data is loaded
     if (!session || !currentQuestion) {
       return;
@@ -78,10 +78,9 @@ const HostQuiz = () => {
     session?.status, 
     session?.show_leaderboard, 
     session?.currentQuestionEndTime,
-    currentQuestion?.time_limit,// Added dependency
+    currentQuestion?.time_limit, // <-- THIS IS THE FIX
     toast
   ]);
-  // --- END FIX ---
 
   const showLeaderboardMutation = useMutation(api.gameplay.showLeaderboard);
   const setRevealAnswerMutation = useMutation(api.gameplay.setRevealAnswer);

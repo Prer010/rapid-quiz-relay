@@ -41,10 +41,18 @@ const JoinQuiz = () => {
       navigate(`/play/${sessionId}?participant=${participantId}`);
 
   } catch (error: any) {
-      const errorMessage = error.message || "An unknown error occurred.";
+      // If the session has already started, the server throws a message indicating
+      // the quiz is no longer accepting new players. Show a clearer toast in that case.
+      const serverMessage = error?.message ? String(error.message) : "";
+      let description = "An unknown error occured."; // intentionally the user's spelling
+
+      if (/no longer accepting/i.test(serverMessage) || /already started/i.test(serverMessage)) {
+        description = "Quiz has already started.";
+      }
+
       toast({ 
         title: "Failed to Join", 
-        description: errorMessage,
+        description,
         variant: "destructive" 
       });
     } finally {

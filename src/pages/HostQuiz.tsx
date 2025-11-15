@@ -41,6 +41,15 @@ const HostQuiz = () => {
   // --- START FIX ---
   // 1. Initialize to a simple default value.
   const [timeLeft, setTimeLeft] = useState(30);
+  // Track whether we've shown the "Time's up" toast for the current question
+  const [timeUpNotified, setTimeUpNotified] = useState(false);
+
+  // Reset the toast notification flag when a new question's endTime is set
+  useEffect(() => {
+    if (session?.currentQuestionEndTime) {
+      setTimeUpNotified(false);
+    }
+  }, [session?.currentQuestionEndTime]);
 
   // 2. This single effect now handles all timer logic.
  useEffect(() => {
@@ -58,8 +67,10 @@ const HostQuiz = () => {
         
         setTimeLeft(remainingSeconds);
 
-        if (remainingSeconds === 0) {
+        if (remainingSeconds === 0 && !timeUpNotified) {
+          // Show the toast only once per question
           toast({ title: "Time's up!", description: "Players can no longer answer. Click 'Show Leaderboard' or 'Next'."});
+          setTimeUpNotified(true);
         }
       };
 
@@ -78,7 +89,9 @@ const HostQuiz = () => {
     session?.status, 
     session?.show_leaderboard, 
     session?.currentQuestionEndTime,
-    currentQuestion?.time_limit, // <-- THIS IS THE FIX
+    currentQuestion?.time_limit,
+    timeUpNotified,
+    toast,
   ]);
 
   const showLeaderboardMutation = useMutation(api.gameplay.showLeaderboard);
@@ -216,6 +229,7 @@ const HostQuiz = () => {
               {/* --- MODIFIED BUTTON GROUP --- */}
               <div className="flex gap-1 justify-end mb-2 ">
                 <Button
+                  disabled={timeLeft > 0 || session?.reveal_answer}
                   onClick={async () => {
                     if (!sessionId) return;
                     try {
@@ -226,15 +240,16 @@ const HostQuiz = () => {
                   }}
                   size="sm"
                   variant={session?.reveal_answer ? undefined : "outline"}
-                  className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-base md:px-5 md:py-3 md:text-lg rounded-lg text-gray-600"
+                  className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-base md:px-5 md:py-3 md:text-lg rounded-lg text-gray-800 bg-yellow-600"
                 >
                   Reveal Answer
                 </Button>
                 <Button
+                  disabled={timeLeft > 0}
                   onClick={handleShowLeaderboardClick} // <-- Use new handler
                   size="sm"
-                  variant="outline" // <-- Removed dependency on local state
-                  className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-base md:px-5 md:py-3 md:text-lg rounded-lg text-gray-600"
+                  variant="ghost" // <-- Removed dependency on local state
+                  className="px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-base md:px-5 md:py-3 md:text-lg rounded-lg text-gray-500"
                 >
                  Show Leaderboard
                 </Button>
